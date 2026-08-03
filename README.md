@@ -12,9 +12,8 @@ cp .env.example .env   # point VITE_API_URL at your running server (defaults to 
 yarn dev
 ```
 
-Sign in with an admin account — the demo seed script (`server/scripts/seedDemoData.ts`) creates one
-at `admin@ascendtuition.test` / `Password123!`. There's no self-signup for admin accounts (by
-design); create additional ones directly in the database or via a trusted script.
+Sign in with an existing admin account. There's no self-signup for admin accounts by design;
+provision the first account through a trusted production setup script or directly in the database.
 
 ## Production build
 
