@@ -39,6 +39,15 @@ export interface TutorProfile {
   bio?: string;
 }
 
+export interface CourseItem {
+  _id: string;
+  tutor: string | TutorProfile;
+  subject: string;
+  yearGroup: string;
+  topic?: string;
+  students: (string | StudentProfile)[];
+}
+
 export interface PackageItem {
   _id: string;
   name: string;

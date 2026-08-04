@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/parents', label: 'Parents' },
   { to: '/packages', label: 'Packages' },
   { to: '/enrollments', label: 'Enrollments' },
+  { to: '/courses', label: 'Courses' },
   { to: '/payments', label: 'Payments' },
   { to: '/referrals', label: 'Referrals' },
 ];
