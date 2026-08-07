@@ -1,88 +1,40 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getUsers } from '../api/user';
-import { getAllEnrollments } from '../api/enrollment';
-import { getAllPayments } from '../api/payment';
-import { getAllReferrals } from '../api/referral';
+import { getAnalytics } from '../api/analytics';
 
-const formatAmount = (amountMinor: number, currency: string) =>
-  `${currency === 'GBP' ? '£' : currency + ' '}${(amountMinor / 100).toFixed(2)}`;
+const formatAmount = (amountMinor: number) => `£${(amountMinor / 100).toFixed(2)}`;
+const count = (rows: Array<{ _id: string; count: number }> | undefined, status: string) => rows?.find((row) => row._id === status)?.count ?? 0;
 
 const OverviewPage: React.FC = () => {
-  const usersQuery = useQuery({ queryKey: ['admin', 'users'], queryFn: getUsers });
-  const enrollmentsQuery = useQuery({ queryKey: ['admin', 'enrollments'], queryFn: getAllEnrollments });
-  const paymentsQuery = useQuery({ queryKey: ['admin', 'payments'], queryFn: getAllPayments });
-  const referralsQuery = useQuery({ queryKey: ['admin', 'referrals'], queryFn: getAllReferrals });
+  const query = useQuery({ queryKey: ['admin', 'analytics'], queryFn: getAnalytics });
+  const data = query.data?.analytics;
+  if (query.isLoading) return <div className="card">Loading analytics…</div>;
+  if (!data) return <div className="card">Analytics could not be loaded.</div>;
+  const attendanceTotal = data.attendance.reduce((sum, row) => sum + row.count, 0);
+  const attendanceRate = attendanceTotal ? Math.round((count(data.attendance, 'present') / attendanceTotal) * 100) : 0;
+  const referralTotal = data.referrals.reduce((sum, row) => sum + row.count, 0);
+  const referralConversion = referralTotal ? Math.round((count(data.referrals, 'rewarded') / referralTotal) * 100) : 0;
 
-  const users = usersQuery.data?.users ?? [];
-  const enrollments = enrollmentsQuery.data?.enrollments ?? [];
-  const payments = paymentsQuery.data?.payments ?? [];
-  const referrals = referralsQuery.data?.referrals ?? [];
-
-  const activeEnrollments = enrollments.filter((e) => e.status === 'active');
-  const succeededPayments = payments.filter((p) => p.status === 'succeeded');
-  const revenueThisMonth = succeededPayments
-    .filter((p) => {
-      const d = new Date(p.createdAt);
-      const now = new Date();
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    })
-    .reduce((sum, p) => sum + p.amountMinor, 0);
-  const rewardedReferrals = referrals.filter((r) => r.status === 'rewarded');
-
-  const roleCounts = users.reduce<Record<string, number>>((acc, u) => {
-    acc[u.role] = (acc[u.role] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  return (
-    <div>
-      <h1 className="page-title">Overview</h1>
-      <p className="page-subtitle">A snapshot of Ascend Tuition right now.</p>
-
-      <div className="stat-grid">
-        <div className="stat-tile">
-          <div className="stat-value">{users.length}</div>
-          <div className="stat-label">Total accounts</div>
-        </div>
-        <div className="stat-tile">
-          <div className="stat-value">{activeEnrollments.length}</div>
-          <div className="stat-label">Active enrollments</div>
-        </div>
-        <div className="stat-tile">
-          <div className="stat-value">{formatAmount(revenueThisMonth, 'GBP')}</div>
-          <div className="stat-label">Revenue this month</div>
-        </div>
-      </div>
-
-      <div className="stat-grid">
-        <div className="stat-tile">
-          <div className="stat-value">{roleCounts.student ?? 0}</div>
-          <div className="stat-label">Students</div>
-        </div>
-        <div className="stat-tile">
-          <div className="stat-value">{roleCounts.parent ?? 0}</div>
-          <div className="stat-label">Parents</div>
-        </div>
-        <div className="stat-tile">
-          <div className="stat-value">{roleCounts.tutor ?? 0}</div>
-          <div className="stat-label">Tutors</div>
-        </div>
-      </div>
-
-      <div className="card">
-        <h2 style={{ marginTop: 0, fontSize: 16 }}>Referrals</h2>
-        <p className="page-subtitle" style={{ marginBottom: 0 }}>
-          {referrals.length} total referrals · {rewardedReferrals.length} rewarded ·{' '}
-          {formatAmount(
-            rewardedReferrals.reduce((sum, r) => sum + (r.rewardValue ?? 0), 0),
-            'GBP'
-          )}{' '}
-          credited to parents
-        </p>
-      </div>
+  return <div>
+    <h1 className="page-title">Overview</h1><p className="page-subtitle">Live operational, learning and commercial performance.</p>
+    <div className="stat-grid">
+      <div className="stat-tile"><div className="stat-value">{Object.values(data.usersByRole).reduce((a, b) => a + b, 0)}</div><div className="stat-label">Total accounts</div></div>
+      <div className="stat-tile"><div className="stat-value">{data.activeEnrollments}</div><div className="stat-label">Active enrollments</div></div>
+      <div className="stat-tile"><div className="stat-value">{formatAmount(data.revenueThisMonthMinor)}</div><div className="stat-label">Revenue this month</div></div>
+      <div className="stat-tile"><div className="stat-value">{data.recentlyActive}</div><div className="stat-label">Active in 30 days</div></div>
     </div>
-  );
+    <div className="stat-grid">
+      <div className="stat-tile"><div className="stat-value">{attendanceRate}%</div><div className="stat-label">Attendance rate</div></div>
+      <div className="stat-tile"><div className="stat-value">{count(data.lessonStatus, 'completed')}</div><div className="stat-label">Lessons completed</div></div>
+      <div className="stat-tile"><div className="stat-value">{count(data.paymentStatus, 'failed')}</div><div className="stat-label">Failed payments</div></div>
+      <div className="stat-tile"><div className="stat-value">{referralConversion}%</div><div className="stat-label">Referral conversion</div></div>
+    </div>
+    <div className="card"><h2 style={{ marginTop: 0, fontSize: 16 }}>Progress by subject</h2>
+      <div className="table-wrap"><table><thead><tr><th>Subject</th><th>Average mastery</th><th>Assessments</th></tr></thead><tbody>
+        {data.progressBySubject.map((row) => <tr key={row._id}><td>{row._id}</td><td>{Math.round(row.averageMastery)}%</td><td>{row.records}</td></tr>)}
+        {!data.progressBySubject.length ? <tr><td colSpan={3}>No progress data yet.</td></tr> : null}
+      </tbody></table></div>
+    </div>
+  </div>;
 };
-
 export default OverviewPage;
