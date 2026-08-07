@@ -56,6 +56,8 @@ export interface PackageItem {
   currency: string;
   lessonsIncluded: number;
   validityDays: number;
+  academicBand?: 'ks3' | 'gcse' | 'alevel';
+  packageType?: 'bundle' | 'top_up';
   isActive?: boolean;
 }
 

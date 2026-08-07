@@ -25,6 +25,8 @@ export const createPackage = async (payload: {
   currency: string;
   lessonsIncluded: number;
   validityDays: number;
+  academicBand?: 'ks3' | 'gcse' | 'alevel';
+  packageType?: 'bundle' | 'top_up';
 }) => {
   const { data } = await axiosInstance.post<PackageResult>('/package', payload);
   return data;

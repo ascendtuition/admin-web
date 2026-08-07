@@ -11,6 +11,8 @@ interface FormState {
   currency: string;
   lessonsIncluded: string;
   validityDays: string;
+  academicBand: 'ks3' | 'gcse' | 'alevel';
+  packageType: 'bundle' | 'top_up';
 }
 
 const EMPTY_FORM: FormState = {
@@ -20,6 +22,8 @@ const EMPTY_FORM: FormState = {
   currency: 'GBP',
   lessonsIncluded: '',
   validityDays: '',
+  academicBand: 'gcse',
+  packageType: 'bundle',
 };
 
 const PackagesPage: React.FC = () => {
@@ -41,6 +45,8 @@ const PackagesPage: React.FC = () => {
         currency: form.currency,
         lessonsIncluded: parseInt(form.lessonsIncluded, 10),
         validityDays: parseInt(form.validityDays, 10),
+        academicBand: form.academicBand,
+        packageType: form.packageType,
       }),
     onSuccess: () => {
       invalidate();
@@ -57,6 +63,8 @@ const PackagesPage: React.FC = () => {
         currency: form.currency,
         lessonsIncluded: parseInt(form.lessonsIncluded, 10),
         validityDays: parseInt(form.validityDays, 10),
+        academicBand: form.academicBand,
+        packageType: form.packageType,
       }),
     onSuccess: () => {
       invalidate();
@@ -84,6 +92,8 @@ const PackagesPage: React.FC = () => {
       currency: pkg.currency,
       lessonsIncluded: pkg.lessonsIncluded.toString(),
       validityDays: pkg.validityDays.toString(),
+      academicBand: pkg.academicBand ?? 'gcse',
+      packageType: pkg.packageType ?? 'bundle',
     });
     setShowModal(true);
   };
@@ -121,6 +131,7 @@ const PackagesPage: React.FC = () => {
                 <th>Name</th>
                 <th>Price</th>
                 <th>Lessons</th>
+                <th>Level</th>
                 <th>Validity</th>
                 <th>Status</th>
                 <th></th>
@@ -140,6 +151,7 @@ const PackagesPage: React.FC = () => {
                     {(pkg.priceMinor / 100).toFixed(2)}
                   </td>
                   <td>{pkg.lessonsIncluded}</td>
+                  <td>{(pkg.academicBand ?? 'gcse').toUpperCase()} · {pkg.packageType === 'top_up' ? 'Top-up' : 'Pack'}</td>
                   <td>{pkg.validityDays} days</td>
                   <td>
                     <StatusPill
@@ -197,6 +209,17 @@ const PackagesPage: React.FC = () => {
               value={form.lessonsIncluded}
               onChange={(e) => setForm((f) => ({ ...f, lessonsIncluded: e.target.value }))}
             />
+            <label className="label">Academic level</label>
+            <select className="input" value={form.academicBand} onChange={(e) => setForm((f) => ({ ...f, academicBand: e.target.value as FormState['academicBand'] }))}>
+              <option value="ks3">Years 7–9</option>
+              <option value="gcse">Years 10–11 / GCSE</option>
+              <option value="alevel">Years 12–13 / A-Level</option>
+            </select>
+            <label className="label">Package type</label>
+            <select className="input" value={form.packageType} onChange={(e) => setForm((f) => ({ ...f, packageType: e.target.value as FormState['packageType'] }))}>
+              <option value="bundle">Full pack (resets credits)</option>
+              <option value="top_up">Top-up (adds credits)</option>
+            </select>
             <label className="label">Validity (days)</label>
             <input
               className="input"
