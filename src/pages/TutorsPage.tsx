@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getTutors, createTutorAccount } from '../api/tutor';
+import { getTutors, createTutorAccount, updateTutor } from '../api/tutor';
+import type { TutorProfile } from '../types';
 
 const SUBJECT_OPTIONS = ['Maths', 'Chemistry', 'Biology', 'Physics', 'English', 'English Literature'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const TutorsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -13,6 +15,8 @@ const TutorsPage: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [subjects, setSubjects] = useState<string[]>([]);
   const [error, setError] = useState('');
+  const [availabilityTutor,setAvailabilityTutor]=useState<TutorProfile|null>(null);
+  const [availability,setAvailability]=useState<Array<{dayOfWeek:number;startTime:string;endTime:string}>>([]);
 
   const { data, isLoading } = useQuery({ queryKey: ['admin', 'tutors'], queryFn: getTutors });
 
@@ -33,6 +37,10 @@ const TutorsPage: React.FC = () => {
       setError('');
     },
   });
+  const availabilityMutation=useMutation({mutationFn:()=>updateTutor(availabilityTutor!._id,{availability}),onSuccess:()=>{queryClient.invalidateQueries({queryKey:['admin','tutors']});setAvailabilityTutor(null)}});
+  const editAvailability=(tutor:TutorProfile)=>{setAvailabilityTutor(tutor);setAvailability(tutor.availability??[])};
+  const toggleDay=(dayOfWeek:number)=>setAvailability(prev=>prev.some(s=>s.dayOfWeek===dayOfWeek)?prev.filter(s=>s.dayOfWeek!==dayOfWeek):[...prev,{dayOfWeek,startTime:'09:00',endTime:'17:00'}]);
+  const changeSlot=(dayOfWeek:number,key:'startTime'|'endTime',value:string)=>setAvailability(prev=>prev.map(s=>s.dayOfWeek===dayOfWeek?{...s,[key]:value}:s));
 
   const toggleSubject = (subject: string) => {
     setSubjects((prev) => (prev.includes(subject) ? prev.filter((s) => s !== subject) : [...prev, subject]));
@@ -62,6 +70,7 @@ const TutorsPage: React.FC = () => {
                 <th>Name</th>
                 <th>Subjects</th>
                 <th>Bio</th>
+                <th>Availability</th>
               </tr>
             </thead>
             <tbody>
@@ -72,6 +81,7 @@ const TutorsPage: React.FC = () => {
                   </td>
                   <td>{(tutor.subjects ?? []).join(', ') || '—'}</td>
                   <td>{tutor.bio || '—'}</td>
+                  <td><button className="button secondary" onClick={()=>editAvailability(tutor)}>{tutor.availability?.length?`${tutor.availability.length} days`:'Set hours'}</button></td>
                 </tr>
               ))}
             </tbody>
@@ -130,6 +140,7 @@ const TutorsPage: React.FC = () => {
           </div>
         </div>
       ) : null}
+      {availabilityTutor?<div className="modal-backdrop" onClick={()=>setAvailabilityTutor(null)}><div className="modal-card" onClick={e=>e.stopPropagation()}><h2 style={{marginTop:0}}>Availability · {availabilityTutor.firstName}</h2>{DAYS.map((day,dayOfWeek)=>{const slot=availability.find(s=>s.dayOfWeek===dayOfWeek);return <div key={day} style={{display:'grid',gridTemplateColumns:'120px 1fr 1fr',gap:8,alignItems:'center',marginBottom:8}}><label><input type="checkbox" checked={!!slot} onChange={()=>toggleDay(dayOfWeek)}/> {day}</label><input className="input" type="time" disabled={!slot} value={slot?.startTime??'09:00'} onChange={e=>changeSlot(dayOfWeek,'startTime',e.target.value)}/><input className="input" type="time" disabled={!slot} value={slot?.endTime??'17:00'} onChange={e=>changeSlot(dayOfWeek,'endTime',e.target.value)}/></div>})}<div style={{display:'flex',gap:8,marginTop:16}}><button className="button" onClick={()=>availabilityMutation.mutate()} disabled={availabilityMutation.isPending}>Save availability</button><button className="button secondary" onClick={()=>setAvailabilityTutor(null)}>Cancel</button></div></div></div>:null}
     </div>
   );
 };

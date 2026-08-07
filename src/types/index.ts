@@ -37,6 +37,7 @@ export interface TutorProfile {
   lastName: string;
   subjects?: string[];
   bio?: string;
+  availability?: Array<{ dayOfWeek: number; startTime: string; endTime: string }>;
 }
 
 export interface CourseItem {

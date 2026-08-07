@@ -13,6 +13,9 @@ const NAV_ITEMS = [
   { to: '/courses', label: 'Courses' },
   { to: '/payments', label: 'Payments' },
   { to: '/referrals', label: 'Referrals' },
+  { to: '/notifications', label: 'Announcements' },
+  { to: '/content', label: 'Content CMS' },
+  { to: '/operations', label: 'Operations' },
 ];
 
 const Layout: React.FC = () => {

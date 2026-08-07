@@ -14,6 +14,9 @@ import EnrollmentsPage from './pages/EnrollmentsPage';
 import PaymentsPage from './pages/PaymentsPage';
 import ReferralsPage from './pages/ReferralsPage';
 import CoursesPage from './pages/CoursesPage';
+import NotificationsPage from './pages/NotificationsPage';
+import ContentPage from './pages/ContentPage';
+import OperationsPage from './pages/OperationsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +52,9 @@ function App() {
               <Route path="courses" element={<CoursesPage />} />
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="referrals" element={<ReferralsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="content" element={<ContentPage />} />
+              <Route path="operations" element={<OperationsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
