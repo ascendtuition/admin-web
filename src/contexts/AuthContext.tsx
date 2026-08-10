@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!response.success) {
       throw new Error(response.message || 'Login failed');
     }
-    if (response.role !== 'admin') {
+    if (!['admin', 'owner'].includes(response.role)) {
       throw new Error('This portal is for admins only.');
     }
 

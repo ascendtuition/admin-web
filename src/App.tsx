@@ -17,6 +17,7 @@ import CoursesPage from './pages/CoursesPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ContentPage from './pages/ContentPage';
 import OperationsPage from './pages/OperationsPage';
+import SchedulePage from './pages/SchedulePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +56,7 @@ function App() {
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="operations" element={<OperationsPage />} />
+              <Route path="schedule" element={<SchedulePage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

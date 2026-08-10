@@ -19,9 +19,10 @@ export const getUsers = async () => {
 };
 
 export const updateUser = async (userId: string, changes: { isActive?: boolean }) => {
-  const { data } = await axiosInstance.put<GetUserResult>(`/user/${userId}`, changes);
+  const { data } = await axiosInstance.patch<GetUserResult>(`/user/${userId}/status`, changes);
   return data;
 };
+export const updateUserAccess=async(userId:string,role:'admin'|'owner',permissions:string[])=>(await axiosInstance.patch(`/user/${userId}/access`,{role,permissions})).data;
 
 export const deactivateUser = async (userId: string) => {
   const { data } = await axiosInstance.delete<GetUserResult>(`/user/${userId}/deactivate`);

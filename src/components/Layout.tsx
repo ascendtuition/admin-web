@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/notifications', label: 'Announcements' },
   { to: '/content', label: 'Content CMS' },
   { to: '/operations', label: 'Operations' },
+  { to: '/schedule', label: 'Scheduling' },
 ];
 
 const Layout: React.FC = () => {

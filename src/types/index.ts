@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'parent' | 'tutor' | 'admin';
+export type UserRole = 'student' | 'parent' | 'tutor' | 'admin' | 'owner';
 
 export interface AdminUser {
   _id: string;
@@ -7,6 +7,7 @@ export interface AdminUser {
   isActive: boolean;
   createdAt: string;
   lastLoginAt?: string;
+  permissions?: string[];
 }
 
 export interface StudentProfile {
