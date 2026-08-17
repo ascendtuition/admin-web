@@ -45,7 +45,9 @@ export interface CourseItem {
   _id: string;
   tutor: string | TutorProfile;
   subject: string;
-  yearGroup: string;
+  yearGroups: string[];
+  /** Display-only compatibility label for older admin views. */
+  yearGroup?: string;
   topic?: string;
   students: (string | StudentProfile)[];
 }

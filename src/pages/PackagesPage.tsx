@@ -113,7 +113,7 @@ const PackagesPage: React.FC = () => {
         <div>
           <h1 className="page-title">Packages</h1>
           <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            Pricing and lesson bundles parents can purchase.
+            Manage full lesson packages and optional credits families can add at any time.
           </p>
         </div>
         <button className="button" onClick={openCreate}>
@@ -151,8 +151,8 @@ const PackagesPage: React.FC = () => {
                     {(pkg.priceMinor / 100).toFixed(2)}
                   </td>
                   <td>{pkg.lessonsIncluded}</td>
-                  <td>{(pkg.academicBand ?? 'gcse').toUpperCase()} · {pkg.packageType === 'top_up' ? 'Top-up' : 'Pack'}</td>
-                  <td>{pkg.validityDays} days</td>
+                  <td>{(pkg.academicBand ?? 'gcse').toUpperCase()} · {pkg.packageType === 'top_up' ? 'Extra credits' : 'Full package'}</td>
+                  <td>{pkg.packageType === 'top_up' ? 'Keeps current package' : `${pkg.validityDays} days`}</td>
                   <td>
                     <StatusPill
                       label={pkg.isActive === false ? 'inactive' : 'active'}
@@ -217,8 +217,8 @@ const PackagesPage: React.FC = () => {
             </select>
             <label className="label">Package type</label>
             <select className="input" value={form.packageType} onChange={(e) => setForm((f) => ({ ...f, packageType: e.target.value as FormState['packageType'] }))}>
-              <option value="bundle">Full pack (resets credits)</option>
-              <option value="top_up">Top-up (adds credits)</option>
+              <option value="bundle">Full package (starts or renews enrollment)</option>
+              <option value="top_up">Extra lesson credits (always available)</option>
             </select>
             <label className="label">Validity (days)</label>
             <input
