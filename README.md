@@ -8,7 +8,7 @@ Talks to the same backend API as the mobile app (`../server`).
 
 ```bash
 yarn install
-cp .env.example .env   # point VITE_API_URL at your running server (defaults to localhost:8080/api)
+cp .env.example .env   # defaults to https://ascend-tuition-server.onrender.com/api
 yarn dev
 ```
 
@@ -22,7 +22,7 @@ yarn build   # outputs static files to dist/
 ```
 
 `dist/` is a static site — deploy it to any static host (Render Static Site, Netlify, Vercel, etc.)
-pointed at this repo, with `VITE_API_URL` set to your deployed backend's `/api` URL.
+pointed at this repo. `VITE_API_URL` defaults to `https://ascend-tuition-server.onrender.com/api`.
 
 ## What's here (minimal v1 — no analytics dashboards yet)
 

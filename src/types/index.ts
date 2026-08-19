@@ -80,6 +80,8 @@ export interface EnrollmentItem {
   startDate: string;
   endDate: string;
   lessonsRemaining: number;
+  referralLessonCreditsRemaining?: number;
+  referralCreditAwardedMinor?: number;
 }
 
 export interface PaymentItem {
@@ -100,5 +102,6 @@ export interface ReferralItem {
   status: 'invited' | 'signedup' | 'enrolled' | 'rewarded';
   rewardType?: string;
   rewardValue?: number;
+  rewardAllocations?: Array<{ enrollment: string; student: string; valueMinor: number; lessonCredits: number }>;
   createdAt: string;
 }

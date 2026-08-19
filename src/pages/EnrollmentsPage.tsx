@@ -39,7 +39,12 @@ const EnrollmentsPage: React.FC = () => {
                   <td>
                     <StatusPill label={enrollment.status} />
                   </td>
-                  <td>{enrollment.lessonsRemaining}</td>
+                  <td>
+                    {enrollment.lessonsRemaining + Math.floor((enrollment.referralLessonCreditsRemaining ?? 0) + 0.000001)}
+                    {(enrollment.referralCreditAwardedMinor ?? 0) > 0
+                      ? ` (${(enrollment.referralLessonCreditsRemaining ?? 0).toFixed(2)} referral credits remaining · £${((enrollment.referralCreditAwardedMinor ?? 0) / 100).toFixed(2)} awarded)`
+                      : ''}
+                  </td>
                   <td>{format(new Date(enrollment.endDate), 'd MMM yyyy')}</td>
                 </tr>
               ))}

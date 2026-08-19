@@ -5,7 +5,8 @@
 // user is sent back to /login.
 import axios from 'axios';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const DEFAULT_API_URL = 'https://ascend-tuition-server.onrender.com/api';
+export const API_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/$/, '');
 
 export const TOKEN_KEY = 'ascend_admin_token';
 export const REFRESH_TOKEN_KEY = 'ascend_admin_refresh_token';
